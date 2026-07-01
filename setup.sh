@@ -4,18 +4,18 @@
 IMG_DIR="/tmp/neoanime_assets"
 mkdir -p "$IMG_DIR"
 
-# Download the wizard images from GitHub raw in the background
-# (Make sure to replace these URLs with your actual repository paths if needed)
-curl -s -L -o "$IMG_DIR/welcome.jpg" "https://raw.githubusercontent.com/hussinchahin435-maker/NeoAnime-Hypr/main/1000374184.jpg"
-curl -s -L -o "$IMG_DIR/cancel.jpg" "https://raw.githubusercontent.com/hussinchahin435-maker/NeoAnime-Hypr/main/1000374185.jpg"
-curl -s -L -o "$IMG_DIR/success.jpg" "https://raw.githubusercontent.com/hussinchahin435-maker/NeoAnime-Hypr/main/1000374186.jpg"
+# Download the wizard images using the exact long names from your repository
+curl -s -L -o "$IMG_DIR/welcome.jpg" "https://raw.githubusercontent.com/hussinchahin435-maker/NeoAnime-Hypr/main/6d990f3aa03a6957474e0faa23da4e67.jpg"
+curl -s -L -o "$IMG_DIR/cancel.jpg" "https://raw.githubusercontent.com/hussinchahin435-maker/NeoAnime-Hypr/main/9948b8482680859cc1c7562d6431b68b.jpg"
+curl -s -L -o "$IMG_DIR/success.jpg" "https://raw.githubusercontent.com/hussinchahin435-maker/NeoAnime-Hypr/main/b08bf2c9acf2dbeaa50835511d2a1d48.jpg"
 
+# Ensure zenity is installed for the GUI
 if ! command -v zenity &> /dev/null; then
     echo "Installing zenity for the GUI wizard..."
     yay -S --noconfirm zenity
 fi
 
-# 1. Welcome & Question Window with Image 1000374184.jpg
+# 1. Welcome & Question Window with Image 1 (6d990f3a...)
 zenity --question \
     --title="NeoAnime-Hypr Setup" \
     --text="Welcome to NeoAnime-Hypr Setup Wizard!\n\nDo you want to start the installation now?" \
@@ -24,7 +24,7 @@ zenity --question \
     --width=450
 
 if [ $? -ne 0 ]; then
-    # 2. Cancel Window with Image 1000374185.jpg
+    # 2. Cancel Window with Image 2 (9948b848...)
     zenity --error \
         --title="Installation Canceled" \
         --text="Installation canceled by user. See you next time!" \
@@ -34,6 +34,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+# 3. Progress Bar with incremental percentage updates
 (
 echo "10" ; echo "# Initializing system configuration..."
 sleep 1
@@ -52,6 +53,7 @@ curl -L -o ~/Pictures/anime.png "https://raw.githubusercontent.com/dharmx/walls/
 
 echo "80" ; echo "# Generating configuration files and VM patches..."
 
+# Generate hyprland.conf with Arch VM fixes
 cat << 'EOF2' > ~/.config/hypr/hyprland.conf
 monitor=,preferred,auto,1
 
@@ -112,6 +114,7 @@ bindm = $mainMod, mouse:272, movewindow
 bindm = $mainMod, mouse:273, resizewindow
 EOF2
 
+# Generate Waybar Config
 cat << 'EOF3' > ~/.config/waybar/config
 {
     "layer": "top",
@@ -138,6 +141,7 @@ cat << 'EOF3' > ~/.config/waybar/config
 }
 EOF3
 
+# Generate Waybar Style CSS
 cat << 'EOF4' > ~/.config/waybar/style.css
 * {
     border: none;
@@ -175,7 +179,7 @@ echo "100" ; echo "# Done!"
     --auto-close \
     --width=450
 
-# 3. Success Window with Image 1000374186.jpg
+# 4. Success Window with Image 3 (b08bf2c9...)
 zenity --info \
     --title="Success!" \
     --text="NeoAnime-Hypr installation complete!\n\nAll settings have been patched for Arch VM compatibility.\nPlease log out and select Hyprland from your login screen." \
@@ -183,5 +187,6 @@ zenity --info \
     --icon-name="$IMG_DIR/success.jpg" \
     --width=450
 
-# Clean up temporary images
+# Cleanup temporary files
 rm -rf "$IMG_DIR"
+
