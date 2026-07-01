@@ -1,22 +1,36 @@
 #!/bin/bash
 
+# Create a temporary directory for helper images
+IMG_DIR="/tmp/neoanime_assets"
+mkdir -p "$IMG_DIR"
+
+# Download the wizard images from GitHub raw in the background
+# (Make sure to replace these URLs with your actual repository paths if needed)
+curl -s -L -o "$IMG_DIR/welcome.jpg" "https://raw.githubusercontent.com/hussinchahin435-maker/NeoAnime-Hypr/main/1000374184.jpg"
+curl -s -L -o "$IMG_DIR/cancel.jpg" "https://raw.githubusercontent.com/hussinchahin435-maker/NeoAnime-Hypr/main/1000374185.jpg"
+curl -s -L -o "$IMG_DIR/success.jpg" "https://raw.githubusercontent.com/hussinchahin435-maker/NeoAnime-Hypr/main/1000374186.jpg"
+
 if ! command -v zenity &> /dev/null; then
     echo "Installing zenity for the GUI wizard..."
     yay -S --noconfirm zenity
 fi
 
-zenity --info \
-    --title="NeoAnime-Hypr Setup" \
-    --text="Welcome to NeoAnime-Hypr Setup Wizard!\n\nThis script will configure your Hyprland environment with an anime theme and VM compatibility fixes." \
-    --width=400
-
+# 1. Welcome & Question Window with Image 1000374184.jpg
 zenity --question \
-    --title="Proceed Installation?" \
-    --text="Do you want to start the installation now?" \
-    --width=300
+    --title="NeoAnime-Hypr Setup" \
+    --text="Welcome to NeoAnime-Hypr Setup Wizard!\n\nDo you want to start the installation now?" \
+    --window-icon="$IMG_DIR/welcome.jpg" \
+    --icon-name="$IMG_DIR/welcome.jpg" \
+    --width=450
 
 if [ $? -ne 0 ]; then
-    zenity --error --text="Installation canceled by user."
+    # 2. Cancel Window with Image 1000374185.jpg
+    zenity --error \
+        --title="Installation Canceled" \
+        --text="Installation canceled by user. See you next time!" \
+        --window-icon="$IMG_DIR/cancel.jpg" \
+        --icon-name="$IMG_DIR/cancel.jpg" \
+        --width=450
     exit 1
 fi
 
@@ -145,4 +159,29 @@ window#waybar {
     background-color: rgba(41, 46, 66, 0.8);
     margin: 4px 2px;
 }
-#clock { color: #7aa2f7;
+#clock { color: #7aa2f7; }
+#pulseaudio { color: #9ece6a; }
+#network { color: #bb9af7; }
+EOF4
+
+echo "90" ; echo "# Finalizing installation components..."
+sleep 1
+
+echo "100" ; echo "# Done!"
+) | zenity --progress \
+    --title="Installing NeoAnime-Hypr" \
+    --text="Preparing environment..." \
+    --percentage=0 \
+    --auto-close \
+    --width=450
+
+# 3. Success Window with Image 1000374186.jpg
+zenity --info \
+    --title="Success!" \
+    --text="NeoAnime-Hypr installation complete!\n\nAll settings have been patched for Arch VM compatibility.\nPlease log out and select Hyprland from your login screen." \
+    --window-icon="$IMG_DIR/success.jpg" \
+    --icon-name="$IMG_DIR/success.jpg" \
+    --width=450
+
+# Clean up temporary images
+rm -rf "$IMG_DIR"
