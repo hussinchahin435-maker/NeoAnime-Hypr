@@ -1,24 +1,46 @@
 #!/bin/bash
 
-echo "============================================="
-echo "   🚀 Starting NeoAnime-Hypr Setup Wizard"
-echo "============================================="
+if ! command -v zenity &> /dev/null; then
+    echo "Installing zenity for the GUI wizard..."
+    yay -S --noconfirm zenity
+fi
 
-yay -S --noconfirm waybar rofi-wayland wlogout playerctl swww hyprlock grim slurp swappy ttf-font-awesome base-devel
+zenity --info \
+    --title="NeoAnime-Hypr Setup" \
+    --text="Welcome to NeoAnime-Hypr Setup Wizard!\n\nThis script will configure your Hyprland environment with an anime theme and VM compatibility fixes." \
+    --width=400
 
-mkdir -p ~/.config/hypr
-mkdir -p ~/.config/waybar
-mkdir -p ~/.config/rofi
-mkdir -p ~/Pictures
+zenity --question \
+    --title="Proceed Installation?" \
+    --text="Do you want to start the installation now?" \
+    --width=300
 
-curl -L -o ~/Pictures/anime.png "https://raw.githubusercontent.com/dharmx/walls/main/anime/anime_room.png"
+if [ $? -ne 0 ]; then
+    zenity --error --text="Installation canceled by user."
+    exit 1
+fi
 
-cat << 'EOF' > ~/.config/hypr/hyprland.conf
+(
+echo "10" ; echo "# Installing core packages and Arch VM video drivers..."
+sudo pacman -S --noconfirm mesa xf86-video-vmware xorg-xrandr &> /dev/null
+yay -S --noconfirm waybar rofi-wayland wlogout playerctl swww hyprlock grim slurp swappy ttf-font-awesome base-devel &> /dev/null
+
+echo "40" ; echo "# Creating configuration directories..."
+mkdir -p ~/.config/hypr ~/.config/waybar ~/.config/rofi ~/Pictures
+
+echo "60" ; echo "# Downloading default anime wallpaper..."
+curl -L -o ~/Pictures/anime.png "https://raw.githubusercontent.com/dharmx/walls/main/anime/anime_room.png" &> /dev/null
+
+echo "80" ; echo "# Generating configuration files with VM patches..."
+
+cat << 'EOF2' > ~/.config/hypr/hyprland.conf
 monitor=,preferred,auto,1
 
 env = WLR_RENDERER_ALLOW_SOFTWARE,1
-env = QSG_RENDER_LOOP,basic
 env = WLR_NO_HARDWARE_CURSORS,1
+env = National_RENDERER,pixman
+env = WLR_RENDERER,pixman
+env = QSG_RENDER_LOOP,basic
 
 exec-once = swww-daemon & sleep 1 && swww img ~/Pictures/anime.png
 exec-once = waybar
@@ -43,7 +65,6 @@ decoration {
     blur {
         enabled = false
     }
-    drop_shadow = false
 }
 
 animations {
@@ -70,9 +91,9 @@ bind = $mainMod, down, movefocus, d
 
 bindm = $mainMod, mouse:272, movewindow
 bindm = $mainMod, mouse:273, resizewindow
-EOF
+EOF2
 
-cat << 'EOF' > ~/.config/waybar/config
+cat << 'EOF3' > ~/.config/waybar/config
 {
     "layer": "top",
     "position": "top",
@@ -96,9 +117,9 @@ cat << 'EOF' > ~/.config/waybar/config
         "format": "🔋 {capacity}%"
     }
 }
-EOF
+EOF3
 
-cat << 'EOF' > ~/.config/waybar/style.css
+cat << 'EOF4' > ~/.config/waybar/style.css
 * {
     border: none;
     border-radius: 8px;
@@ -122,8 +143,17 @@ window#waybar {
 #clock { color: #7aa2f7; }
 #pulseaudio { color: #9ece6a; }
 #network { color: #bb9af7; }
-EOF
+EOF4
 
-echo "============================================="
-echo " ✨ NeoAnime-Hypr installation complete!"
-echo "============================================="
+echo "100" ; echo "# Installation completed successfully!"
+) | zenity --progress \
+    --title="Installing NeoAnime-Hypr" \
+    --text="Preparing system..." \
+    --percentage=0 \
+    --auto-close \
+    --width=400
+
+zenity --info \
+    --title="Success!" \
+    --text="NeoAnime-Hypr installation complete!\n\nAll settings and configs have been patched for Arch VM compatibility.\nPlease log out and select Hyprland from your login screen." \
+    --width=400
