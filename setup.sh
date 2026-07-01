@@ -21,17 +21,22 @@ if [ $? -ne 0 ]; then
 fi
 
 (
-echo "10" ; echo "# Installing core packages and Arch VM video drivers..."
+echo "10" ; echo "# Initializing system configuration..."
+sleep 1
+
+echo "20" ; echo "# Installing Arch VM video drivers via Pacman..."
 sudo pacman -S --noconfirm mesa xf86-video-vmware xorg-xrandr &> /dev/null
+
+echo "40" ; echo "# Installing core desktop packages via Yay (This may take a moment)..."
 yay -S --noconfirm waybar rofi-wayland wlogout playerctl swww hyprlock grim slurp swappy ttf-font-awesome base-devel &> /dev/null
 
-echo "40" ; echo "# Creating configuration directories..."
+echo "60" ; echo "# Creating environment directories..."
 mkdir -p ~/.config/hypr ~/.config/waybar ~/.config/rofi ~/Pictures
 
-echo "60" ; echo "# Downloading default anime wallpaper..."
+echo "70" ; echo "# Downloading default anime wallpaper..."
 curl -L -o ~/Pictures/anime.png "https://raw.githubusercontent.com/dharmx/walls/main/anime/anime_room.png" &> /dev/null
 
-echo "80" ; echo "# Generating configuration files with VM patches..."
+echo "80" ; echo "# Generating configuration files and VM patches..."
 
 cat << 'EOF2' > ~/.config/hypr/hyprland.conf
 monitor=,preferred,auto,1
@@ -140,20 +145,4 @@ window#waybar {
     background-color: rgba(41, 46, 66, 0.8);
     margin: 4px 2px;
 }
-#clock { color: #7aa2f7; }
-#pulseaudio { color: #9ece6a; }
-#network { color: #bb9af7; }
-EOF4
-
-echo "100" ; echo "# Installation completed successfully!"
-) | zenity --progress \
-    --title="Installing NeoAnime-Hypr" \
-    --text="Preparing system..." \
-    --percentage=0 \
-    --auto-close \
-    --width=400
-
-zenity --info \
-    --title="Success!" \
-    --text="NeoAnime-Hypr installation complete!\n\nAll settings and configs have been patched for Arch VM compatibility.\nPlease log out and select Hyprland from your login screen." \
-    --width=400
+#clock { color: #7aa2f7;
