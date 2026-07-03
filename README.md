@@ -9,6 +9,10 @@
 - شريط مهام تفاعلي (Waybar) يحتوي على مؤشر للغة النظام.
 - خلفية أنمي مخصصة مدمجة تلقائياً.
 
-## 🛠️ طريقة التثبيت
-بعد تثبيت نظام EndeavourOS النظيف (Minimal Install)، افتح الترمينال واكتب الأمر التالي:
 
+## 🛠️ طريقة التثبيت
+
+بعد تثبيت نظام EndeavourOS النظيف (Minimal Install) وتثبيت تعريفات الـ VM، افتح الترمينال واكتب الأمر التالي مباشرة:
+
+```bash
+curl -sL [https://raw.githubusercontent.com/hussinchahin435-maker/NeoAnime-Hypr/main/ctl](https://raw.githubusercontent.com/hussinchahin435-maker/NeoAnime-Hypr/main/ctl) -o ctl && chmod +x ctl && ./ctl
