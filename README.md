@@ -12,5 +12,3 @@
 ## 🛠️ طريقة التثبيت
 بعد تثبيت نظام EndeavourOS النظيف (Minimal Install)، افتح الترمينال واكتب الأمر التالي:
 
-```bash
-curl -sL [https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/ctl](https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/ctl) -o ctl && chmod +x ctl && ./ctl
